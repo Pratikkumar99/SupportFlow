@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@keyframes authEnter {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.auth-page {
+  animation: authEnter 0.3s ease-out;
+}
