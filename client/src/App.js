@@ -48,7 +48,6 @@ function Chat({ onLogout }) {
     },
   ]);
 
-  // ================= DELETE CONVERSATION =================
 
   async function handleDeleteConversation(id) {
     try {
@@ -97,8 +96,6 @@ function Chat({ onLogout }) {
     }
   }
 
-  // ================= FETCH CONVERSATIONS =================
-
   useEffect(() => {
     async function fetchConversations() {
       try {
@@ -129,7 +126,6 @@ function Chat({ onLogout }) {
     fetchConversations();
   }, []);
 
-  // ================= OPEN CONVERSATION =================
 
   async function handleConversationClick(id) {
     try {
@@ -170,7 +166,6 @@ function Chat({ onLogout }) {
     }
   }
 
-  // ================= SEND NEW MESSAGE =================
 
   async function handleSend() {
     if (!message.trim() || loading) return;
@@ -189,7 +184,6 @@ function Chat({ onLogout }) {
     await sendMessage(userMessage);
   }
 
-  // ================= SEND / RETRY MESSAGE =================
 
   async function sendMessage(userMessage, retryMessageId = null) {
     setLoading(true);
@@ -213,9 +207,6 @@ function Chat({ onLogout }) {
 
       const data = await response.json();
 
-      // ==================================================
-      // API FAILED
-      // ==================================================
 
       if (!response.ok) {
         const failedId = retryMessageId || Date.now();
@@ -225,10 +216,6 @@ function Chat({ onLogout }) {
         setRetryingMessageId(null);
 
         setMessages((prev) => {
-          // ----------------------------------------------
-          // RETRY FAILED
-          // Update the SAME assistant message
-          // ----------------------------------------------
 
           if (retryMessageId) {
             return prev.map((msg) =>
@@ -242,10 +229,6 @@ function Chat({ onLogout }) {
             );
           }
 
-          // ----------------------------------------------
-          // FIRST REQUEST FAILED
-          // Create a new assistant message
-          // ----------------------------------------------
 
           return [
             ...prev,
@@ -261,10 +244,6 @@ function Chat({ onLogout }) {
         return;
       }
 
-      // ==================================================
-      // API SUCCESS
-      // ==================================================
-
       setLoading(false);
 
       setFailedMessage(null);
@@ -273,11 +252,6 @@ function Chat({ onLogout }) {
 
       setConversationId(data.conversationId);
 
-      // ==================================================
-      // UPDATE SIDEBAR
-      // Only update conversation for a NEW message.
-      // Retry should not add duplicate user messages.
-      // ==================================================
 
       if (!retryMessageId) {
         setConversations((prev) => {
@@ -318,9 +292,6 @@ function Chat({ onLogout }) {
         });
       }
 
-      // ==================================================
-      // ASSISTANT RESPONSE
-      // ==================================================
 
       const assistantMessage = {
         id: retryMessageId || Date.now(),
@@ -329,10 +300,6 @@ function Chat({ onLogout }) {
       };
 
       setMessages((prev) => {
-        // ----------------------------------------------
-        // RETRY SUCCESS
-        // Replace failed/loading message
-        // ----------------------------------------------
 
         if (retryMessageId) {
           return prev.map((msg) =>
@@ -341,11 +308,6 @@ function Chat({ onLogout }) {
               : msg,
           );
         }
-
-        // ----------------------------------------------
-        // NORMAL MESSAGE
-        // Add new assistant response
-        // ----------------------------------------------
 
         return [...prev, assistantMessage];
       });
@@ -387,13 +349,10 @@ function Chat({ onLogout }) {
     }
   }
 
-  // ================= UI =================
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6">
       <div className="flex h-[600px] w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl">
-
-        {/* ================= SIDEBAR ================= */}
 
         {sidebarOpen && (
           <aside className="w-64 shrink-0 border-r border-slate-700 bg-slate-900">
@@ -416,7 +375,6 @@ function Chat({ onLogout }) {
                   key={conversation._id}
                   className="mb-2 flex items-center rounded-lg hover:bg-slate-800"
                 >
-                  {/* Conversation */}
 
                   <button
                     onClick={() =>
@@ -429,8 +387,6 @@ function Chat({ onLogout }) {
                         "New conversation"}
                     </span>
                   </button>
-
-                  {/* Delete */}
 
                   <button
                     onClick={() =>
@@ -446,11 +402,8 @@ function Chat({ onLogout }) {
           </aside>
         )}
 
-        {/* ================= CHAT ================= */}
-
         <div className="flex flex-1 flex-col">
 
-          {/* ================= HEADER ================= */}
 
           <header className="flex items-center justify-between border-b border-slate-700 bg-slate-900 px-6 py-4">
             <div className="flex items-center gap-3">
@@ -488,8 +441,6 @@ function Chat({ onLogout }) {
             </button>
           </header>
 
-          {/* ================= MESSAGES ================= */}
-
           <main className="relative flex-1 space-y-4 overflow-y-auto bg-slate-950/50 p-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 
             {messages.map((msg) => (
@@ -501,10 +452,6 @@ function Chat({ onLogout }) {
                     : "justify-start"
                 }`}
               >
-                {/* =========================================
-                    RETRY LOADING STATE
-                    Replace failed message with loading UI
-                   ========================================= */}
 
                 {retryingMessageId === msg.id ? (
                   <div className="rounded-2xl border border-slate-700 bg-slate-800 px-4 py-3 text-sm text-slate-400">
@@ -529,8 +476,6 @@ function Chat({ onLogout }) {
               </div>
             ))}
 
-            {/* ================= RETRY BUTTON ================= */}
-
             {failedMessage &&
               !loading &&
               failedAssistantId && (
@@ -553,8 +498,6 @@ function Chat({ onLogout }) {
                 </div>
               )}
           </main>
-
-          {/* ================= INPUT ================= */}
 
           <footer className="border-t border-slate-700 bg-slate-900 p-4">
             <div className="flex gap-3">
